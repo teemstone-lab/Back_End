@@ -35,6 +35,23 @@ pub fn load_db() {
   CACHE_DATA.lock().unwrap().clear();
 }
 
+pub fn create_table(){
+  let str_dbconn: String;
+  unsafe {
+    str_dbconn = format!("host={} port={}  user={} password={} dbname={}", DBINFO.host, DBINFO.port, DBINFO.user, DBINFO.password, DBINFO.dbname);
+  }
+  let mut client = Client::connect(&str_dbconn, NoTls).unwrap();
+
+  client.batch_execute("
+        CREATE TABLE IF NOT EXISTS tbpane (
+          _number           Integer,
+          _data            text
+          )
+    ").unwrap();
+  client.close().unwrap();
+
+}
+
 pub fn set_pane_insert(pane_data: Json<dbmodel::SetPaneJsonData>) -> String{
   let str_dbconn: String;
   unsafe {

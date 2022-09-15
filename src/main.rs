@@ -29,5 +29,6 @@ fn get_pane_data(num: i32) -> String {
 
 fn main() {
     pgmanager::load_db();
+    pgmanager::create_table();
     rocket::ignite().mount("/", routes![set_pane_data, get_pane_data]).launch();
 }
