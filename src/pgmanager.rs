@@ -44,7 +44,7 @@ pub fn create_table(){
 
   client.batch_execute("
         CREATE TABLE IF NOT EXISTS tbpane (
-          _number           Integer,
+          _number          Integer PRIMARY KEY,
           _data            text
           )
     ").unwrap();
@@ -104,27 +104,25 @@ pub fn get_pane(num: i32) -> String{
       }
     }
   }
-
+  let mut str_returndata: String = "".to_string();
   let str_dbconn: String;
   unsafe {
       str_dbconn = format!("host={} port={}  user={} password={} dbname={}", DBINFO.host, DBINFO.port, DBINFO.user, DBINFO.password, DBINFO.dbname);
   }
   let mut client = Client::connect(&str_dbconn, NoTls).unwrap();
   //println!("num == {}", num.to_string());
-  let row = client.query_one("SELECT _data FROM tbpane where _number=$1", &[&num]).unwrap(); 
-  let str_data: String = row.get("_data");
-  let str_returndata = str_data.clone();
-  println!("strdata == {}", str_returndata);
-  if CACHE_DATA.lock().unwrap().len() > 0 {
-    CACHE_DATA.lock().unwrap().clear();
-    CACHE_DATA.lock().unwrap().insert(num, str_data);
-  } else {
-    CACHE_DATA.lock().unwrap().insert(num, str_data);
-  }
+  for row in client.query("SELECT _data FROM tbpane where _number=$1", &[&num]).unwrap(){
+    let str_data: String = row.get("_data");
+    str_returndata = str_data.clone();
+    println!("strdata == {}", str_returndata);
+    if CACHE_DATA.lock().unwrap().len() > 0 {
+      CACHE_DATA.lock().unwrap().clear();
+      CACHE_DATA.lock().unwrap().insert(num, str_data);
+    } else {
+      CACHE_DATA.lock().unwrap().insert(num, str_data);
+    }
+  } 
+  
   client.close().unwrap();
   str_returndata
 }
-
-
-
-
