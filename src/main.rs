@@ -2,12 +2,15 @@
 
 #[macro_use] extern crate rocket;
 use rocket_contrib::json::Json;
+use rocket::http::Method;
+use rocket_cors::{AllowedOrigins, CorsOptions, AllowedHeaders};
+
+
 mod model;
 mod pgmanager;
 
 
-
-#[post("/setPane", format = "json", data = "<pane_data>")]
+#[post("/setPane", format = "application/json", data = "<pane_data>")]
 fn set_pane_data(pane_data: Json<pgmanager::dbmodel::SetPaneJsonData>) -> String {
     let str_panedata: String;
     let str_dbdata: String = pgmanager::get_pane(pane_data.number);
@@ -27,8 +30,22 @@ fn get_pane_data(num: i32) -> String {
     str_panedata
 }
 
+
+
 fn main() {
     pgmanager::load_db();
     pgmanager::create_table();
-    rocket::ignite().mount("/", routes![set_pane_data, get_pane_data]).launch();
+
+    let cors = CorsOptions::default()
+    .allowed_headers(AllowedHeaders::all())
+    .allowed_origins(AllowedOrigins::all())
+    .allowed_methods(
+        vec![Method::Post]
+            .into_iter()
+            .map(From::from)
+            .collect(),
+    )
+    .allow_credentials(true);
+
+    rocket::ignite().attach(cors.to_cors().unwrap()).mount("/", routes![set_pane_data, get_pane_data]).launch();
 }
