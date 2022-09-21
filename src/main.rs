@@ -45,7 +45,7 @@ fn main() {
     .allowed_headers(AllowedHeaders::all())
     .allowed_origins(AllowedOrigins::all())
     .allowed_methods(
-        vec![Method::Post]
+        vec![Method::Get, Method::Post]
             .into_iter()
             .map(From::from)
             .collect(),
