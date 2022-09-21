@@ -30,6 +30,11 @@ fn get_pane_data(num: i32) -> String {
     str_panedata
 }
 
+#[get("/getPane/count")]
+fn get_pane_count() -> String {
+    let pane_count: String = pgmanager::get_pane_count();
+    pane_count
+}
 
 
 fn main() {
@@ -47,5 +52,5 @@ fn main() {
     )
     .allow_credentials(true);
 
-    rocket::ignite().attach(cors.to_cors().unwrap()).mount("/", routes![set_pane_data, get_pane_data]).launch();
+    rocket::ignite().attach(cors.to_cors().unwrap()).mount("/", routes![set_pane_data, get_pane_data, get_pane_count]).launch();
 }
