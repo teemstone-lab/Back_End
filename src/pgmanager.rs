@@ -93,6 +93,22 @@ pub fn set_pane_update(pane_data: Json<dbmodel::SetPaneJsonData>) -> String{
   format!("{:?}", pane_data)
 }
 
+pub fn get_pane_count() -> String {
+  let mut cnt_data: String = "".to_string();
+  let str_dbconn: String;
+  unsafe {
+      str_dbconn = format!("host={} port={}  user={} password={} dbname={}", DBINFO.host, DBINFO.port, DBINFO.user, DBINFO.password, DBINFO.dbname);
+  }
+  let mut client = Client::connect(&str_dbconn, NoTls).unwrap();
+  //println!("num == {}", num.to_string());
+  for row in client.query("SELECT count(*) as cnt FROM tbpane", &[]).unwrap(){
+    let data: i64 = row.get("cnt");
+    cnt_data = data.to_string();
+  }
+  client.close().unwrap();
+  cnt_data
+}
+
 pub fn get_pane(num: i32) -> String{
   //cache Check
   if CACHE_DATA.lock().unwrap().len() > 0 {
