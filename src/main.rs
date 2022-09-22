@@ -1,6 +1,7 @@
 #![feature(proc_macro_hygiene, decl_macro)]
+#[macro_use]
 
-#[macro_use] extern crate rocket;
+extern crate rocket;
 use rocket_contrib::json::Json;
 use rocket::http::Method;
 use rocket_cors::{AllowedOrigins, CorsOptions, AllowedHeaders};
@@ -9,6 +10,18 @@ use rocket_cors::{AllowedOrigins, CorsOptions, AllowedHeaders};
 mod model;
 mod pgmanager;
 
+#[macro_export]
+macro_rules! skmacro{
+    () =>{
+        println!("No Arg"); 
+    };
+    (arg => $arg:expr) =>{
+        println!("One == {}", $arg);
+    };
+    ($arg:expr, $arg2:expr) =>{
+        println!("One == {}  Two == {}", $arg, $arg2);
+    };
+}
 
 #[post("/setPane", format = "application/json", data = "<pane_data>")]
 fn set_pane_data(pane_data: Json<pgmanager::dbmodel::SetPaneJsonData>) -> String {
@@ -37,9 +50,15 @@ fn get_pane_count() -> String {
 }
 
 
+
+
 fn main() {
     pgmanager::load_db();
     pgmanager::create_table();
+
+    skmacro!();
+    skmacro!(arg => "1234");
+    skmacro!("Hoho", 3.14);
 
     let cors = CorsOptions::default()
     .allowed_headers(AllowedHeaders::all())
@@ -53,4 +72,5 @@ fn main() {
     .allow_credentials(true);
 
     rocket::ignite().attach(cors.to_cors().unwrap()).mount("/", routes![set_pane_data, get_pane_data, get_pane_count]).launch();
+    
 }
