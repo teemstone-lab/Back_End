@@ -35,6 +35,12 @@ pub fn load_db() {
   CACHE_DATA.lock().unwrap().clear();
 }
 
+pub fn get_dbinfo() -> &'static dbmodel::DBModel{
+  unsafe{
+    &DBINFO
+  }
+}
+
 pub fn create_table(){
   let str_dbconn: String;
   unsafe {

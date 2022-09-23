@@ -6,9 +6,9 @@ use rocket_contrib::json::Json;
 use rocket::http::Method;
 use rocket_cors::{AllowedOrigins, CorsOptions, AllowedHeaders};
 
-
 mod model;
 mod pgmanager;
+mod skthread;
 
 #[macro_export]
 macro_rules! skmacro{
@@ -49,16 +49,16 @@ fn get_pane_count() -> String {
     pane_count
 }
 
-
-
-
 fn main() {
+    // let mut skhandle: JoinHandle<()>;
     pgmanager::load_db();
     pgmanager::create_table();
-
+    
     skmacro!();
     skmacro!(arg => "1234");
     skmacro!("Hoho", 3.14);
+
+    skthread::sk_threadstart(pgmanager::get_dbinfo());
 
     let cors = CorsOptions::default()
     .allowed_headers(AllowedHeaders::all())
