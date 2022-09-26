@@ -26,7 +26,7 @@ static mut DBINFO:dbmodel::DBModel = dbmodel::DBModel{
 
 pub fn load_db() {
   unsafe {
-      DBINFO.host = "localhost";
+      DBINFO.host = "192.168.0.107";
       DBINFO.port = "5432";
       DBINFO.user = "ontune";
       DBINFO.password = "ontune";
