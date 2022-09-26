@@ -49,6 +49,11 @@ fn get_pane_count() -> String {
     pane_count
 }
 
+#[get("/")]
+fn get_index() -> &'static str {
+    "Hello, workd!"
+}
+
 fn main() {
     // let mut skhandle: JoinHandle<()>;
     pgmanager::load_db();
@@ -71,6 +76,6 @@ fn main() {
     )
     .allow_credentials(true);
 
-    rocket::ignite().attach(cors.to_cors().unwrap()).mount("/", routes![set_pane_data, get_pane_data, get_pane_count]).launch();
+    rocket::ignite().attach(cors.to_cors().unwrap()).mount("/", routes![get_index, set_pane_data, get_pane_data, get_pane_count]).launch();
     
 }
