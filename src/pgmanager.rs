@@ -35,7 +35,6 @@ const INIT_PASSWORD: &str = "ontune";
 const INIT_DBNAME: &str = "webTest";    
 
 pub fn load_db() {
-
   if Path::new("setting.ini").exists() {   
     let get_conf = Ini::load_from_file("setting.ini").unwrap();
     let section = get_conf.section(Some("db")).unwrap().clone();
