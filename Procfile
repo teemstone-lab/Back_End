@@ -1,0 +1,1 @@
+web: ROCKET_PORT=$PORT ROCKET_ENV ./target/release/hello-rocket
