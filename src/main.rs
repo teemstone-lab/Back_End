@@ -71,6 +71,6 @@ fn main() {
     )
     .allow_credentials(true);
 
-    rocket::ignite().attach(cors.to_cors().unwrap()).mount("/", routes![get_index, set_pane_data, get_pane_data, get_pane_count]).launch();
+    rocket::ignite().attach(cors.to_cors().unwrap()).mount("/", routes![set_pane_data, get_pane_data, get_pane_count]).launch();
     
 }
