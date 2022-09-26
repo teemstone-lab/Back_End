@@ -2,6 +2,7 @@
 #[macro_use]
 
 extern crate rocket;
+
 use rocket_contrib::json::Json;
 use rocket::http::Method;
 use rocket_cors::{AllowedOrigins, CorsOptions, AllowedHeaders};
@@ -49,8 +50,9 @@ fn get_pane_count() -> String {
     pane_count
 }
 
+
+
 fn main() {
-    // let mut skhandle: JoinHandle<()>;
     pgmanager::load_db();
     pgmanager::create_table();
     

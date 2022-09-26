@@ -1,10 +1,13 @@
 #[warn(unused_imports)]
+extern crate ini;
 
 use rocket_contrib::json::Json;
 use postgres::{Client, NoTls};
 use lazy_static::lazy_static;
 use std::collections::HashMap;
 use std::sync::Mutex;
+use std::path::Path;
+use ini::Ini;
 
 pub mod dbmodel;
 
@@ -16,21 +19,49 @@ lazy_static! {
   };
 }
 
+
 static mut DBINFO:dbmodel::DBModel = dbmodel::DBModel{
-  host: "",
-  port: "",
-  user: "",
-  password: "",
-  dbname: "",
+  host: String::new(),
+  port: String::new(),
+  user: String::new(),
+  password: String::new(),
+  dbname: String::new(),
 };
 
+const INIT_HOST: &str = "127.0.0.1"; 
+const INIT_PORT: &str = "5432";  
+const INIT_USER: &str = "ontune";  
+const INIT_PASSWORD: &str = "ontune";  
+const INIT_DBNAME: &str = "webTest";    
+
 pub fn load_db() {
-  unsafe {
-      DBINFO.host = "127.0.0.1";
-      DBINFO.port = "5432";
-      DBINFO.user = "ontune";
-      DBINFO.password = "ontune";
-      DBINFO.dbname = "webTest";
+
+  if Path::new("setting.ini").exists() {   
+    let get_conf = Ini::load_from_file("setting.ini").unwrap();
+    let section = get_conf.section(Some("db")).unwrap().clone();
+    unsafe{
+      DBINFO.host = section.get("host").unwrap().to_string();
+      DBINFO.port = section.get("port").unwrap().to_string();
+      DBINFO.user = section.get("user").unwrap().to_string();
+      DBINFO.password = section.get("password").unwrap().to_string();
+      DBINFO.dbname = section.get("dbname").unwrap().to_string();
+    }
+  } else {
+    let mut conf = Ini::new();
+
+    conf.with_section(None::<String>)
+    .set("encoding", "utf-8");
+    conf.with_section(Some("db".to_owned())).set("host", INIT_HOST).set("port", INIT_PORT).set("user", INIT_USER)
+    .set("password", INIT_PASSWORD).set("dbname", INIT_DBNAME);
+    conf.write_to_file("setting.ini").unwrap();
+
+    unsafe{
+      DBINFO.host = INIT_HOST.to_string();
+      DBINFO.port = INIT_PORT.to_string();
+      DBINFO.user = INIT_USER.to_string();
+      DBINFO.password = INIT_PASSWORD.to_string();
+      DBINFO.dbname = INIT_DBNAME.to_string();
+    }
   }
   CACHE_DATA.lock().unwrap().clear();
 }
