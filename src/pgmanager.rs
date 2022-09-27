@@ -37,7 +37,7 @@ const INIT_DBNAME: &str = "webTest";
 pub fn load_db() {
   if Path::new("setting.ini").exists() {   
     let get_conf = Ini::load_from_file("setting.ini").unwrap();
-    let section = get_conf.section(Some("db")).unwrap().clone();
+    let section = get_conf.section(Some("db")).unwrap();
     unsafe{
       DBINFO.host = section.get("host").unwrap().to_string();
       DBINFO.port = section.get("port").unwrap().to_string();
