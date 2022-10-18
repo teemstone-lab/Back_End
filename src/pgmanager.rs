@@ -101,6 +101,7 @@ pub fn set_pane_insert(pane_data: Json<dbmodel::SetPaneJsonData>) -> String{
        "INSERT INTO tbpane (_number, _data) VALUES ($1, $2)",
        &[&pane_data.number, &pane_data.data],
   );
+  println!("{} rows inserted", _a);
   client.close().unwrap();
   format!("{:?}", pane_data)
 }
@@ -125,6 +126,7 @@ pub fn set_pane_update(pane_data: Json<dbmodel::SetPaneJsonData>) -> String{
         "UPDATE tbpane SET _data = $2 WHERE _number = $1",
         &[&pane_data.number, &pane_data.data],
   );
+  println!("{} rows updated", _a);
   client.close().unwrap();
   format!("{:?}", pane_data)
 }
