@@ -101,7 +101,7 @@ pub fn set_pane_insert(pane_data: Json<dbmodel::SetPaneJsonData>) -> String{
        "INSERT INTO tbpane (_number, _data) VALUES ($1, $2)",
        &[&pane_data.number, &pane_data.data],
   );
-  println!("{} rows inserted", _a);
+  //println!("{} rows inserted", _a);
   client.close().unwrap();
   format!("{:?}", pane_data)
 }
@@ -126,7 +126,7 @@ pub fn set_pane_update(pane_data: Json<dbmodel::SetPaneJsonData>) -> String{
         "UPDATE tbpane SET _data = $2 WHERE _number = $1",
         &[&pane_data.number, &pane_data.data],
   );
-  println!("{} rows updated", _a);
+  //println!("{} rows updated", _a);
   client.close().unwrap();
   format!("{:?}", pane_data)
 }
@@ -166,14 +166,14 @@ pub fn get_pane(num: i32) -> String{
   let mut client = Client::connect(&str_dbconn, NoTls).unwrap();
   //println!("num == {}", num.to_string());
   for row in client.query("SELECT _data FROM tbpane where _number=$1", &[&num]).unwrap(){
-    let str_data: String = row.get("_data");
-    str_returndata = str_data.clone();
+    str_returndata = row.get("_data");
+    //str_returndata = str_data.clone();
     println!("strdata == {}", str_returndata);
     if CACHE_DATA.lock().unwrap().len() > 0 {
       CACHE_DATA.lock().unwrap().clear();
-      CACHE_DATA.lock().unwrap().insert(num, str_data);
+      CACHE_DATA.lock().unwrap().insert(num, str_returndata.clone());
     } else {
-      CACHE_DATA.lock().unwrap().insert(num, str_data);
+      CACHE_DATA.lock().unwrap().insert(num, str_returndata.clone());
     }
   } 
   
